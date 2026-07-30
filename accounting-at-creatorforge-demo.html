@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accounting @ CreatorForge — Foundation Program</title>
+<style>
+  :root{
+    --gold:#c9a35c;
+    --gold-dark:#a8823f;
+    --cream:#faf6ee;
+    --ink:#1c1a17;
+    --charcoal:#2b2723;
+    --green:#3f6b4f;
+    --line:#e7ddc9;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Georgia', 'Times New Roman', serif;
+    background:var(--cream);
+    color:var(--ink);
+  }
+  .app{max-width:780px;margin:0 auto;min-height:100vh;background:#fff;box-shadow:0 0 40px rgba(0,0,0,0.06);}
+  header.top{
+    background:linear-gradient(135deg,var(--charcoal),#141210);
+    color:var(--cream);
+    padding:28px 32px 22px;
+    text-align:center;
+    position:relative;
+  }
+  header.top .brand-eyebrow{
+    letter-spacing:3px;
+    font-size:11px;
+    text-transform:uppercase;
+    color:var(--gold);
+    font-family:Arial, sans-serif;
+    margin-bottom:6px;
+  }
+  header.top h1{
+    margin:0;
+    font-size:26px;
+    font-weight:400;
+    letter-spacing:0.5px;
+  }
+  header.top .sub{
+    font-family:Arial, sans-serif;
+    font-size:13px;
+    color:#cfc7b8;
+    margin-top:6px;
+  }
+
+  /* progress rail */
+  .rail{
+    display:flex;
+    justify-content:space-between;
+    padding:18px 32px;
+    background:#fff;
+    border-bottom:1px solid var(--line);
+    font-family:Arial, sans-serif;
+  }
+  .rail .step{
+    flex:1;
+    text-align:center;
+    position:relative;
+    font-size:11px;
+    color:#9c9483;
+    cursor:pointer;
+  }
+  .rail .dot{
+    width:28px;height:28px;border-radius:50%;
+    background:#efe9db;border:2px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 6px;
+    font-size:13px;color:#a99f8a;
+    transition:all .25s ease;
+  }
+  .rail .step.done .dot{background:var(--gold);border-color:var(--gold-dark);color:#fff;}
+  .rail .step.active .dot{border-color:var(--green);color:var(--green);box-shadow:0 0 0 3px rgba(63,107,79,0.12);}
+  .rail .step.active{color:var(--green);font-weight:bold;}
+  .rail .step.done{color:var(--gold-dark);}
+  .rail .step:not(:last-child)::after{
+    content:'';
+    position:absolute;top:14px;left:60%;right:-40%;
+    height:2px;background:var(--line);z-index:0;
+  }
+  .rail .step.done:not(:last-child)::after{background:var(--gold);}
+
+  main{padding:32px;}
+  .screen{display:none;}
+  .screen.active{display:block;animation:fadeIn .3s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  h2.module-title{
+    font-size:22px;margin:0 0 4px;color:var(--ink);
+  }
+  .module-kicker{
+    font-family:Arial, sans-serif;
+    font-size:11px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--green);margin-bottom:10px;
+  }
+  .video-placeholder{
+    background:#141210;
+    border-radius:10px;
+    color:#cfc7b8;
+    aspect-ratio:16/9;
+    display:flex;
+    flex-direction:column;
+    align-items:center;justify-content:center;
+    margin:14px 0 18px;
+    font-family:Arial, sans-serif;
+    position:relative;
+    overflow:hidden;
+  }
+  .video-placeholder .play{
+    width:56px;height:56px;border-radius:50%;
+    background:var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;color:#141210;
+    margin-bottom:10px;
+    cursor:pointer;
+  }
+  .video-placeholder .cap{font-size:12px;color:#9c9483;}
+  .video-placeholder .who{font-size:13px;color:var(--gold);margin-top:2px;}
+
+  .lesson-copy{
+    font-size:15.5px;line-height:1.65;color:#3a3630;
+    font-family: Georgia, serif;
+  }
+  .lesson-copy p{margin:0 0 12px;}
+  .callout{
+    background:#f6f1e4;
+    border-left:3px solid var(--gold);
+    padding:12px 16px;
+    font-family:Arial, sans-serif;
+    font-size:13.5px;
+    color:#5c5340;
+    margin:16px 0;
+    border-radius:0 6px 6px 0;
+  }
+
+  form.intake{
+    margin-top:20px;
+    background:#fbf9f3;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:20px;
+    font-family:Arial, sans-serif;
+  }
+  form.intake .intake-title{
+    font-weight:bold;font-size:13px;
+    text-transform:uppercase;letter-spacing:1px;
+    color:var(--charcoal);margin-bottom:12px;
+  }
+  .field-row{display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
+  .field{flex:1;min-width:160px;display:flex;flex-direction:column;}
+  .field label{font-size:11.5px;color:#7a7261;margin-bottom:4px;}
+  .field input, .field select{
+    padding:9px 10px;border:1px solid var(--line);border-radius:6px;
+    font-size:13.5px;font-family:Arial, sans-serif;background:#fff;
+  }
+  .field input:focus, .field select:focus{outline:none;border-color:var(--green);}
+  .radio-group{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+  .radio-chip{
+    border:1px solid var(--line);border-radius:20px;padding:6px 14px;
+    font-size:12.5px;cursor:pointer;background:#fff;color:#5c5340;
+  }
+  .radio-chip.selected{background:var(--green);color:#fff;border-color:var(--green);}
+
+  .actions{display:flex;justify-content:space-between;align-items:center;margin-top:24px;}
+  button{
+    font-family:Arial, sans-serif;
+    border:none;border-radius:8px;padding:12px 22px;
+    font-size:13.5px;font-weight:bold;cursor:pointer;
+    transition:transform .1s ease;
+  }
+  button:active{transform:scale(0.97);}
+  .btn-primary{background:var(--green);color:#fff;}
+  .btn-primary:hover{background:#345a41;}
+  .btn-ghost{background:none;color:#9c9483;}
+  .btn-gold{background:var(--gold);color:#1c1a17;}
+
+  .locked-note{font-size:12px;color:#a99f8a;font-family:Arial,sans-serif;margin-top:6px;}
+
+  /* quiz */
+  .quiz-q{margin-bottom:22px;}
+  .quiz-q p{font-family:Arial, sans-serif;font-weight:bold;font-size:14px;margin-bottom:8px;}
+
+  /* champagne badge board */
+  .badge-board{display:flex;justify-content:center;gap:14px;margin:14px 0 20px;flex-wrap:wrap;}
+  .badge{
+    width:52px;height:52px;border-radius:50%;
+    background:#efe9db;border:2px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:22px;
+    filter:grayscale(1) opacity(0.45);
+  }
+  .badge.on{background:#fff8ea;border-color:var(--gold);filter:none;box-shadow:0 0 0 4px rgba(201,163,92,0.15);}
+
+  .addon-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;}
+  .addon-card{
+    border:1px solid var(--line);border-radius:10px;padding:16px;
+    font-family:Arial, sans-serif;
+  }
+  .addon-card h4{margin:0 0 6px;font-size:14px;color:var(--charcoal);}
+  .addon-card p{margin:0 0 10px;font-size:12.5px;color:#7a7261;line-height:1.5;}
+  .addon-card button{width:100%;padding:8px;font-size:12px;}
+  .addon-card.added{background:#f6f1e4;border-color:var(--gold);}
+
+  .hero-final{text-align:center;padding:20px 0 8px;}
+  .hero-final .bottle{font-size:64px;margin-bottom:6px;}
+  .hero-final h2{margin:0 0 8px;font-size:24px;}
+  .hero-final p{font-family:Arial,sans-serif;color:#7a7261;font-size:14px;max-width:460px;margin:0 auto 20px;line-height:1.6;}
+
+  .schedule-box{
+    border:1px dashed var(--gold);
+    border-radius:10px;padding:18px;text-align:center;
+    font-family:Arial, sans-serif;margin-top:26px;
+  }
+  .schedule-box p{font-size:12.5px;color:#7a7261;margin:6px 0 14px;}
+
+  footer.brand-foot{
+    text-align:center;padding:18px;font-family:Arial, sans-serif;
+    font-size:10.5px;color:#b3ab98;letter-spacing:1px;
+    border-top:1px solid var(--line);
+  }
+
+  .welcome h1{font-size:28px;margin:0 0 10px;}
+  .welcome .lede{font-family:Arial,sans-serif;font-size:14.5px;color:#5c5340;line-height:1.7;margin-bottom:22px;}
+  .welcome .verse{
+    font-style:italic;color:#9c9483;font-size:13px;margin:22px 0 0;text-align:center;font-family:Georgia, serif;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <div class="brand-eyebrow">CreatorForge Presents</div>
+    <h1>Accounting @ CreatorForge</h1>
+    <div class="sub">Foundation Program — powered by KelliWorks</div>
+  </header>
+
+  <nav class="rail" id="rail"></nav>
+
+  <main>
+
+    <!-- WELCOME -->
+    <section class="screen active welcome" data-screen="welcome">
+      <h1>You hit Champagne Creator status. 🍾</h1>
+      <div class="lede">
+        First, congrats — 10K/month isn't luck, it's four hours a day of showing up. Now let's make sure the money side of your business is as solid as your content.<br><br>
+        This is the same Foundation walkthrough Luc has every Champagne and Hybrid Creator go through. Five short stops, one form per stop, and you're set up the right way — LLC, bank, card, books, and taxes. Nothing to figure out on your own.
+      </div>
+      <div class="callout">
+        Takes about 12 minutes total. You can stop anytime and pick back up — nothing is lost. If you'd rather just talk it through with a real person, there's a "talk to someone" option at the end.
+      </div>
+      <div class="actions">
+        <span></span>
+        <button class="btn-primary" onclick="goTo('quiz')">Start My Foundation →</button>
+      </div>
+      <div class="verse">"Whoever is faithful in little is faithful also in much." — Luke 16:10</div>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="screen" data-screen="quiz">
+      <div class="module-kicker">Quick Pulse Check</div>
+      <h2 class="module-title">Where are you starting from?</h2>
+      <p class="lesson-copy">Three questions so we skip anything you've already handled.</p>
+
+      <div class="quiz-q">
+        <p>1. Do you have a registered LLC for your Shop/Content income?</p>
+        <div class="radio-group" data-q="llc">
+          <div class="radio-chip" onclick="pick(this,'llc')">Yes, it's done</div>
+          <div class="radio-chip" onclick="pick(this,'llc')">No, need to set it up</div>
+          <div class="radio-chip" onclick="pick(this,'llc')">Not sure / think so</div>
+        </div>
+      </div>
+      <div class="quiz-q">
+        <p>2. Is your business money completely separate from your personal account?</p>
+        <div class="radio-group" data-q="bank">
+          <div class="radio-chip" onclick="pick(this,'bank')">Yes, separate account</div>
+          <div class="radio-chip" onclick="pick(this,'bank')">No, it's all mixed together</div>
+        </div>
+      </div>
+      <div class="quiz-q">
+        <p>3. Has anyone looked at your books or filed taxes for this business yet?</p>
+        <div class="radio-group" data-q="tax">
+          <div class="radio-chip" onclick="pick(this,'tax')">Yes</div>
+          <div class="radio-chip" onclick="pick(this,'tax')">No</div>
+          <div class="radio-chip" onclick="pick(this,'tax')">This is my first year</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-ghost" onclick="goTo('welcome')">← Back</button>
+        <button class="btn-primary" onclick="goTo('llc')">Build My Foundation →</button>
+      </div>
+    </section>
+
+    <!-- MODULE 1: LLC -->
+    <section class="screen" data-screen="llc">
+      <div class="module-kicker">Foundation 1 of 5</div>
+      <h2 class="module-title">Open Your LLC</h2>
+      <div class="video-placeholder">
+        <div class="play">▶</div>
+        <div class="cap">3 min · "Why I tell every creator to do this in week one"</div>
+        <div class="who">— Luc, CreatorForge</div>
+      </div>
+      <div class="lesson-copy">
+        <p>Right now the money coming in is probably going straight to your personal account. That's the fastest way to overpay the IRS and the fastest way to get audited if a bank or the government ever looks closely at what's "you" versus what's "the business."</p>
+        <p>An LLC costs a few hundred dollars and takes about two days once we have your info. It's the line between your personal life and everything you're building.</p>
+        <div class="callout">Kelli's team handles the filing — you just tell us the business name and state, and it's done. No lawyer, no guessing.</div>
+      </div>
+
+      <form class="intake" onsubmit="return complete(event,'llc')">
+        <div class="intake-title">LLC Formation — Quick Intake</div>
+        <div class="field-row">
+          <div class="field"><label>Legal name</label><input required placeholder="Jane Doe"></div>
+          <div class="field"><label>Desired business name</label><input required placeholder="e.g. Doe Creative LLC"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>State of formation</label><input required placeholder="e.g. Texas"></div>
+          <div class="field"><label>Mailing address</label><input required placeholder="Street, city, zip"></div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Registered agent service?</label>
+            <select><option>Yes, set one up for me</option><option>No, I'll be my own agent</option><option>Not sure — recommend one</option></select>
+          </div>
+          <div class="field">
+            <label>Virtual mailbox for business mail?</label>
+            <select><option>Yes, set one up</option><option>No thanks</option><option>Tell me more first</option></select>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Submit &amp; Mark Complete ✓</button>
+      </form>
+
+      <div class="actions">
+        <button class="btn-ghost" onclick="goTo('quiz')">← Back</button>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- MODULE 2: BANK -->
+    <section class="screen" data-screen="bank">
+      <div class="module-kicker">Foundation 2 of 5</div>
+      <h2 class="module-title">Open a Business Bank Account</h2>
+      <div class="video-placeholder">
+        <div class="play">▶</div>
+        <div class="cap">2 min · "The single biggest bookkeeping mistake creators make"</div>
+        <div class="who">— Luc, CreatorForge</div>
+      </div>
+      <div class="lesson-copy">
+        <p>Once the LLC exists, open a bank account in the business name and move every dollar of Shop income through it. Nothing personal touches this account — not your Starbucks, not your rent.</p>
+        <p>Why it matters: at tax time, your bookkeeper reads this account like a book. Mixed accounts mean guessing, and guessing means either overpaying the IRS or missing write-offs you earned.</p>
+        <div class="callout">We can introduce you directly to a community bank we work with — small enough that a real person picks up the phone.</div>
+      </div>
+
+      <form class="intake" onsubmit="return complete(event,'bank')">
+        <div class="intake-title">Business Banking — Quick Intake</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Interested in an intro to our banking partner?</label>
+            <select><option>Yes, connect me</option><option>No, I'll use my own bank</option><option>Already have a business account</option></select>
+          </div>
+          <div class="field"><label>Current bank (if any)</label><input placeholder="e.g. Chase"></div>
+        </div>
+        <button type="submit" class="btn-primary">Submit &amp; Mark Complete ✓</button>
+      </form>
+
+      <div class="actions">
+        <button class="btn-ghost" onclick="goTo('llc')">← Back</button>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- MODULE 3: CREDIT CARD -->
+    <section class="screen" data-screen="card">
+      <div class="module-kicker">Foundation 3 of 5</div>
+      <h2 class="module-title">Get a Business Credit Card</h2>
+      <div class="video-placeholder">
+        <div class="play">▶</div>
+        <div class="cap">2 min · "The card I personally use — and why the fee pays for itself"</div>
+        <div class="who">— Luc, CreatorForge</div>
+      </div>
+      <div class="lesson-copy">
+        <p>Think of every legitimate business expense the same way you think about commission. If you're fighting for a 1-2% commission bump on a product, but you're missing 15% of your spend in write-offs because there's no paper trail — that write-off is worth more than the commission fight.</p>
+        <p>A dedicated business card creates that paper trail automatically, and the right card's perks (points, insurance, cash back) often cover its own annual fee.</p>
+        <div class="callout">Luc's pick: Amex Business Gold/Platinum. If you'd rather build credit first, we also work with a credit repair partner — no judgment, just a plan.</div>
+      </div>
+
+      <form class="intake" onsubmit="return complete(event,'card')">
+        <div class="intake-title">Business Credit — Quick Intake</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Where are you on business credit?</label>
+            <select><option>Ready to apply for a card</option><option>Need credit repair first</option><option>Already have a business card</option></select>
+          </div>
+          <div class="field"><label>Estimated monthly business spend</label><input placeholder="e.g. $2,000"></div>
+        </div>
+        <button type="submit" class="btn-primary">Submit &amp; Mark Complete ✓</button>
+      </form>
+
+      <div class="actions">
+        <button class="btn-ghost" onclick="goTo('bank')">← Back</button>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- MODULE 4: BOOKKEEPING/TAX -->
+    <section class="screen" data-screen="books">
+      <div class="module-kicker">Foundation 4 of 5</div>
+      <h2 class="module-title">Bookkeeping &amp; Taxes</h2>
+      <div class="video-placeholder">
+        <div class="play">▶</div>
+        <div class="cap">4 min · "What actually happens to your 10K/month at tax time"</div>
+        <div class="who">— Luc, CreatorForge</div>
+      </div>
+      <div class="lesson-copy">
+        <p>This is the one almost everyone underestimates. $10K/month feels like freedom — until April, when a business with no bookkeeping owes far more than it should have.</p>
+        <p>Kelli's team sets your books up on QuickBooks, categorizes everything monthly, and builds your quarterly tax strategy so there's no scramble and no surprise bill. This is the foundation the other four exist to protect.</p>
+        <div class="callout">If it's not the right time financially, tell us — we'll find a lighter starting structure instead of a hard no.</div>
+      </div>
+
+      <form class="intake" onsubmit="return complete(event,'books')">
+        <div class="intake-title">Bookkeeping &amp; Tax — Quick Intake</div>
+        <div class="field-row">
+          <div class="field"><label>Average monthly revenue</label><input placeholder="e.g. $10,000"></div>
+          <div class="field"><label>Filed business taxes before?</label><select><option>No, first time</option><option>Yes, myself</option><option>Yes, had someone do it</option></select></div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>What do you need first?</label>
+            <select><option>Monthly bookkeeping</option><option>This year's tax filing</option><option>Both</option><option>Just a strategy call</option></select>
+          </div>
+          <div class="field"><label>Best email to reach you</label><input type="email" required placeholder="you@email.com"></div>
+        </div>
+        <button type="submit" class="btn-primary">Submit &amp; Mark Complete ✓</button>
+      </form>
+
+      <div class="actions">
+        <button class="btn-ghost" onclick="goTo('card')">← Back</button>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- MODULE 5: INVESTING -->
+    <section class="screen" data-screen="invest">
+      <div class="module-kicker">Foundation 5 of 5</div>
+      <h2 class="module-title">Put Your Profit to Work</h2>
+      <div class="video-placeholder">
+        <div class="play">▶</div>
+        <div class="cap">3 min · "What to do with the money once it's actually yours"</div>
+        <div class="who">— Luc, CreatorForge</div>
+      </div>
+      <div class="lesson-copy">
+        <p>Once the first four are handled, the real question shows up: "I have money sitting in an account and I don't know what to do with it." That's a good problem — and it's the one this last stop is for.</p>
+        <p>This isn't a hard sell. It's a short conversation about paying down debt, building reserves, and — when you're ready — simple, low-drama investing options.</p>
+      </div>
+
+      <form class="intake" onsubmit="return complete(event,'invest')">
+        <div class="intake-title">Financial Next Steps — Quick Intake</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Right now, money sitting in the account is...</label>
+            <select><option>Just sitting there, unsure what to do</option><option>Going toward debt payoff</option><option>Already being invested somewhere</option></select>
+          </div>
+          <div class="field">
+            <label>Interested in a short intro call on this?</label>
+            <select><option>Yes, set it up</option><option>Not yet — just information for now</option></select>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Submit &amp; Complete Foundation 🍾</button>
+      </form>
+
+      <div class="actions">
+        <button class="btn-ghost" onclick="goTo('books')">← Back</button>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- ADDONS -->
+    <section class="screen" data-screen="addons">
+      <div class="module-kicker">Optional</div>
+      <h2 class="module-title">A Few More Things That Help</h2>
+      <p class="lesson-copy">Not required — just genuinely useful for creators at your level. Add anything you want; nothing here blocks your Foundation.</p>
+
+      <div class="addon-grid">
+        <div class="addon-card" id="addon-mailbox">
+          <h4>📬 Virtual Mailbox</h4>
+          <p>Business mail scanned and managed for you. Checks get deposited automatically — no more chasing envelopes.</p>
+          <button class="btn-gold" onclick="toggleAddon('addon-mailbox', this)">Add This</button>
+        </div>
+        <div class="addon-card" id="addon-ra">
+          <h4>🧾 Registered Agent</h4>
+          <p>Keeps your home address off public LLC filings and makes sure legal mail never gets missed.</p>
+          <button class="btn-gold" onclick="toggleAddon('addon-ra', this)">Add This</button>
+        </div>
+        <div class="addon-card" id="addon-credit">
+          <h4>📈 Credit Repair Referral</h4>
+          <p>Not ready for a business card yet? We'll connect you with a trusted credit repair partner first.</p>
+          <button class="btn-gold" onclick="toggleAddon('addon-credit', this)">Add This</button>
+        </div>
+        <div class="addon-card" id="addon-bank2">
+          <h4>🏦 Banking Introduction</h4>
+          <p>Direct intro to our community banking partner — real humans, no hold music.</p>
+          <button class="btn-gold" onclick="toggleAddon('addon-bank2', this)">Add This</button>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-ghost" onclick="goTo('invest')">← Back</button>
+        <button class="btn-primary" onclick="goTo('done')">Finish →</button>
+      </div>
+    </section>
+
+    <!-- DONE -->
+    <section class="screen" data-screen="done">
+      <div class="hero-final">
+        <div class="bottle">🍾</div>
+        <h2>Your Foundation Is Set.</h2>
+        <p>Five stops, done. Kelli's team has everything they need to get your LLC, banking, card, books, and taxes moving — no extra calls required unless you want one.</p>
+      </div>
+
+      <div class="badge-board" id="badgeBoard"></div>
+
+      <div class="schedule-box">
+        <strong>Prefer to talk it through with a person?</strong>
+        <p>Some creators just want five minutes on the phone before handing this off. Totally fine — grab a time below.</p>
+        <button class="btn-primary" onclick="alert('Demo only — this would open Kelli\'s scheduling link.')">Schedule a Call with Kelli's Team</button>
+      </div>
+
+      <div class="actions" style="margin-top:28px;">
+        <button class="btn-ghost" onclick="goTo('addons')">← Back</button>
+        <button class="btn-ghost" onclick="restart()">Restart Demo ↺</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="brand-foot">ACCOUNTING @ CREATORFORGE · WHITE-LABELED &amp; POWERED BY KELLIWORKS · DEMO WALKTHROUGH — NOT LIVE</footer>
+</div>
+
+<script>
+const order = ['welcome','quiz','llc','bank','card','books','invest','addons','done'];
+const moduleSteps = ['llc','bank','card','books','invest']; // the 5 rail steps
+let completed = {};
+
+function renderRail(){
+  const rail = document.getElementById('rail');
+  rail.innerHTML = '';
+  const labels = ['LLC','Bank','Card','Books','Invest'];
+  moduleSteps.forEach((key,i)=>{
+    const div = document.createElement('div');
+    div.className = 'step' + (completed[key] ? ' done' : '') + (currentScreen()===key ? ' active' : '');
+    div.onclick = ()=>goTo(key);
+    div.innerHTML = `<div class="dot">${completed[key] ? '✓' : i+1}</div>${labels[i]}`;
+    rail.appendChild(div);
+  });
+}
+
+function currentScreen(){
+  const active = document.querySelector('.screen.active');
+  return active ? active.dataset.screen : '';
+}
+
+function goTo(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`[data-screen="${name}"]`).classList.add('active');
+  renderRail();
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(name==='done') renderBadges();
+}
+
+function pick(el, q){
+  document.querySelectorAll(`[data-q="${q}"] .radio-chip`).forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function complete(e, key){
+  e.preventDefault();
+  completed[key] = true;
+  const next = { llc:'bank', bank:'card', card:'books', books:'invest', invest:'addons' }[key];
+  goTo(next);
+  return false;
+}
+
+function toggleAddon(id, btn){
+  const card = document.getElementById(id);
+  card.classList.toggle('added');
+  btn.textContent = card.classList.contains('added') ? 'Added ✓' : 'Add This';
+}
+
+function renderBadges(){
+  const board = document.getElementById('badgeBoard');
+  const icons = {llc:'🏛️', bank:'🏦', card:'💳', books:'📊', invest:'📈'};
+  board.innerHTML = '';
+  moduleSteps.forEach(key=>{
+    const b = document.createElement('div');
+    b.className = 'badge' + (completed[key] ? ' on' : '');
+    b.textContent = icons[key];
+    board.appendChild(b);
+  });
+}
+
+function restart(){
+  completed = {};
+  document.querySelectorAll('input').forEach(i=>i.value='');
+  document.querySelectorAll('.radio-chip.selected').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('.addon-card.added').forEach(c=>{
+    c.classList.remove('added');
+    c.querySelector('button').textContent = 'Add This';
+  });
+  goTo('welcome');
+}
+
+renderRail();
+</script>
+</body>
+</html>
